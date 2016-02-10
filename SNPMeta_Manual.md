@@ -177,11 +177,10 @@ The same SNP in the Illumina format would look like this:
     TGACTGCCGAGGACGCAGTGCGCTATAGAC[A/G]TTACAGATTCCGCCCTCAGATTATCTGAAC
 
 We provide a script (`Convert_Illumina.py`) to convert the Illumina format into
-standard FASTA format. An A/G SNP from a GBS study might look like this
-(SNP shown in red):
+standard FASTA format. An A/G SNP from a GBS study might look like this:
 
     >SNP_1
-    ATACCACCCAGCCTCCGTGACCTCGAACAGCTACCTGACTATCGCCTTGGGATTCTGTACCTC\textcolor{red}{R}ACAATAG
+    ATACCACCCAGCCTCCGTGACCTCGAACAGCTACCTGACTATCGCCTTGGGATTCTGTACCTCRACAATAG
 
 In some cases, it is possible that the contextual sequence will also contain an
 IUPAC ambiguity code. These cases should not pose problems to SNPMeta, as long
