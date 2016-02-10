@@ -166,15 +166,15 @@ symmetrical, in terms of length, around the query SNP. This is not necessary for
 SNPs from GBS; SNPs can occur at arbitrary positions within the sequence.
 Finally, the SNP should be encoded as an IUPAC two-base ambiguity code, unless
 the `-i` switch is provided. For example, an A/G SNP from an Illumina assay with
-a contextual sequence length of 30 would look like this (SNP shown in red):
+a contextual sequence length of 30 would look like this:
 
     >SNP_1
-    TGACTGCCGAGGACGCAGTGCGCTATAGAC\textcolor{red}{R}TTACAGATTCCGCCCTCAGATTATCTGAAC
+    TGACTGCCGAGGACGCAGTGCGCTATAGACRTTACAGATTCCGCCCTCAGATTATCTGAAC
 
 The same SNP in the Illumina format would look like this:
 
     >SNP_1
-    TGACTGCCGAGGACGCAGTGCGCTATAGAC\textcolor{red}{[A/G]}TTACAGATTCCGCCCTCAGATTATCTGAAC
+    TGACTGCCGAGGACGCAGTGCGCTATAGAC[A/G]TTACAGATTCCGCCCTCAGATTATCTGAAC
 
 We provide a script (`Convert_Illumina.py`) to convert the Illumina format into
 standard FASTA format. An A/G SNP from a GBS study might look like this
@@ -256,7 +256,7 @@ repeated for each SNP. For example, one of the testing SNPs from
     3'_FLANK: TGGCAGCGGCAAAAAGCCCAGTGAGAGAGCCGTCATTTGAGAGGTCGCCGGCGGAGCGCC
     ||
 
-### Verbose Output
+### Tabular Output
 When the `--outfmt tabular` option is given, SNPMeta will write tab-delimited
 text as output. Each row corresponds to a single SNP, and columns are various
 pieces of annotation information. Columns will be filled, depending on the
@@ -273,7 +273,7 @@ always be `-`. The table outputs 23 fields, which are explained below.
 | `GenBankID`       | ID of the GenBank record used for annotation.                                                                                                                                    |
 | `ProteinID`       | Protein ID of the CDS used for annotation, if applicable.                                                                                                                        |
 | `GeneShortName`   | Short name of the gene used for annotation, if applicable.                                                                                                                       |
-| `Position`        | Position of the SNP in the codon. Can take values of `\{1, 2, 3\}` if coding, and `non-coding` if not coding.                                                                    |
+| `Position`        | Position of the SNP in the codon. Can take values of `{1, 2, 3}` if coding, and `non-coding` if not coding.                                                                    |
 | `Downstream`      | How many bp downstream of the CDS the SNP lies, if non-coding.                                                                                                                   |
 | `Upstream`        | How many bp upstream of the CDS the SNP lies, if non-coding.                                                                                                                     |
 | `Silent`          | Whether or not the SNP alters amino acid sequence. Synonymous and non-coding SNPs get `Yes`, and nonsynonymous SNPs get `No`.                                                    |
