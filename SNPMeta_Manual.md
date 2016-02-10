@@ -312,6 +312,7 @@ below.
 | `Disrupted STOP codon`                        | The mutation changes a STOP codon to a different codon.                                                                                                                                                       |
 | `Premature STOP codon`                        | The mutation creates a STOP codon before the end of the annotated CDS.                                                                                                                                        |
 
+## Example Command Lines
 We provide example data from the *Drosophila melanogaster* SNPs used to test
 SNPMeta. These SNPs were constructed to have 60bp of sequence flanking each
 query SNP. To annotate the provided SNPs against the best match in GenBank, type
@@ -322,15 +323,20 @@ query SNP. To annotate the provided SNPs against the best match in GenBank, type
 annotations will be written to `stdout`. Supply the `-o` argument to have to
 write to a file instead:
 
-    SNPMeta.py -f Example_SNPs.fasta -a 'name@domain.com' -l 60 \
+    SNPMeta.py -f Example_SNPs.fasta\
+               -a 'name@domain.com'\
+               -l 60\
                -o SNPMeta_output.txt
 
 To annotate the same SNPs against only *D. simulans*, it is possible to supply
 only the `-t` argument, but it gives better results to also supply the `-q`
 argument:
 
-    SNPMeta.py -f Example_SNPs.fasta -a 'name@domain.com' -l 60 \
-               -q 'Drosophila simulans' -t 'Drosophila simulans'
+    SNPMeta.py -f Example_SNPs.fasta\
+               -a 'name@domain.com'\
+               -l 60\
+               -q 'Drosophila simulans'\
+               -t 'Drosophila simulans'
 
 `-q` is applied to the results returned by BLAST (it sends an Entrez query to
 NCBI's servers), while `-t` acts on the GenBank records once they have been
