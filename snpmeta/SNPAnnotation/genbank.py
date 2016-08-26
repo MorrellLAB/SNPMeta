@@ -88,6 +88,9 @@ class GenBankHandler(object):
 
     def fetch_gb_records(self):
         """Fetches the GenBank records from NCBI."""
+        #   If we get here without any BLAST hits, then we return a False
+        if len(self.gb_ids) == 0:
+            return False
         #   Build lists to hold the request ranges for each record
         starts = []
         ends = []
