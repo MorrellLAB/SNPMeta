@@ -10,6 +10,10 @@ import sys
 import os
 import time
 
+#   Make sure we are running Python 3
+if sys.version_info.major is not 3:
+    sys.exit('This script requires Python 3')
+
 #   Try to import the Biopython library
 try:
     import Bio
