@@ -105,6 +105,8 @@ def main():
         #   Fetch the relevant records
         gb_success = genbank.fetch_gb_records()
         if not gb_success:
+            sys.stderr.write('\n')
+            anno.print_annotation(args.output, args.outfmt)
             continue
         sys.stderr.write('    Done!\n')
         #   And extract the regions and annotations
