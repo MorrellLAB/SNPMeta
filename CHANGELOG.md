@@ -6,6 +6,11 @@ or fundamentally change how the program behaves. Minor version increments
 are small feature additions or bug fixes. Modifications to documentation do not
 alter version numbers.
 
+## 2.1 - 2016-10-12
+### Modified
+- Fixed a bug that caused SNPs with no BLAST hits to either be omitted from the
+  final report, or throw a `UnboundLocalError`.
+
 ## 2.0 - 2016-02-05
 ### Modified
 - **Transitioned from Python 2 to Python 3.**
@@ -35,4 +40,4 @@ alter version numbers.
 ### 2014-02-14
 #### Modified
 - Fixed the way SNPMeta looks for SNPs and XML records to annotate
-  when the -d and --no-blast options are given.
+  when the `-d` and `--no-blast` options are given.
