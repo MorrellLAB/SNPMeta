@@ -41,14 +41,6 @@ as the current version for UNIX-like operating systems.
 Follow the FTP link, and download the appropriate package for your platform.
 This is only required if running BLAST against a local database.
 
-SNPMeta has been tested on, and run successfully on the following platforms:
-
-- CentOS 6.3 (GNU/Linux), Python 2.7.2, BioPython 1.58, EMBOSS 6.5.7
-- OSX 10.6.8 (Snow Leopard), Python 2.6.1, BioPython 1.61, EMBOSS 6.5.7
-- OSX 10.5.8 (Leopard), Python 2.7.3, BioPython 1.61, EMBOSS 6.5.7
-- OSX 10.8.3 (Mountain Lion), Python 2.7.3, BioPython 1.60, EMBOSS 6.5.7
-- Windows XP SP3, Python 2.7.3, BioPython 1.61, EMBOSS 6.5.0
-
 # Running SNPMeta
 SNPMeta is a command-line application; it must be used through a terminal
 emulator (Terminal in Mac OS X, XTerm/RXVT/etc. on Linux or UNIX, and Command
