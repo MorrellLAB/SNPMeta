@@ -33,7 +33,7 @@ def build_targets(fasta, directory, noblast):
     #   Are we annotating a directory or a single file?
     if directory:
         #   Get the list of files we are going to annotate
-        record_list = get_dir_contents(noblast)
+        record_list = get_dir_contents(directory, noblast)
         #   Drop a message if the directory is empty
         #   An empty list evaluates to Boolean False
         if not record_list:

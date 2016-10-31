@@ -31,8 +31,8 @@ do
     #   If you want to BLAST against NCBI's database, add the '-remote' switch
     $BLAST -query $SNP\
     -db $DB\
-    -out $OUT_BLAST\
+    -out ${OUT_BLAST}\
     -outfmt 5\
-    -num_descriptions $NUM_HITS\
-    -num_alignments $EVALUE
+    -max_target_seqs ${NUM_HITS}\
+    -evalue ${EVALUE}
 done

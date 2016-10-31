@@ -17,7 +17,7 @@ from Bio.Alphabet.IUPAC import ambiguous_dna
 class SNPAnnotation(object):
     """A class to store and emit the SNP annotation data."""
 
-    def __init__(self, sequence):
+    def __init__(self, sequence, arg_dict):
         """Initalize the class with the annotation time, and the SNP name.
         These instance variables correspond to table headers in the tabular
         output format."""
@@ -39,7 +39,6 @@ class SNPAnnotation(object):
         self.cds_pos = '-'
         self.codon_1 = '-'
         self.codon_2 = '-'
-        self.amb = '-'
         self.ancestral = '-'
         self.product = '-'
         self.notes = '-'
@@ -52,7 +51,10 @@ class SNPAnnotation(object):
         #   These attributes are merely in support of gathering the above
         #   information.
         self.query_seq = sequence.seq
-        self.context = None
+        self.context, self.amb = self.calculate_clen(
+            arg_dict.clen,
+            arg_dict.gbs, 
+            arg_dict.illumina)
         self.aligned_seq = None
         self.aligned_pos = None
         self.cds_feat = None
@@ -73,32 +75,30 @@ class SNPAnnotation(object):
                 if self.query_seq[cl] in IUPAC:
                     #   First check from the left to see if the contextual
                     #   sequence length gives us an ambiguity
-                    self.context = cl
-                    self.amb = self.query_seq[cl]
+                    return (cl, self.query_seq[cl])
                 elif self.query_seq[-(cl + 1)] in IUPAC:
                     #   Next, check from the right. If this does give us an
                     #   ambiguity, convert the contextual length to a left-
                     #   based offset.
-                    self.context = len(self.query_seq) - (cl + 1)
-                    self.amb = self.query_seq[-(cl + 1)]
                     #   Drop a warning into the 'context_seq' field
                     self.context_seq = 'Short_on_3prime'
+                    return (
+                        len(self.query_seq) - (cl + 1),
+                        self.query_seq[-(cl + 1)]
+                        )
                 else:
                     #   A last resort is to iterate through until we find the
                     #   first ambiguity. This is almost guaranteed to be wrong
                     self.context_seq = 'Shor_on_both'
                     for i, b in enumerate(self.query_seq):
                         if b in IUPAC:
-                            self.context = i
-                            self.amb = b
-                            break
+                            return (i, b)
         elif illumina:
             #   The next flag we check is whether or not the SNPs are given with
             #   Illumina formatting. If so, we search for the [ character that
             #   denotes the query states, and find the offset. We also remove
             #   the non-nucleotide characters from the sequence, as those will
             #   cause errors later.
-            self.context = 'Illumina'
             offset = re.search(r'\[', str(self.query_seq)).start()
             #   Build the fixed sequence
             seq_parts = re.split(r'[\[|\/|\]]', str(self.query_seq))
@@ -109,8 +109,7 @@ class SNPAnnotation(object):
                     snp = a
                     break
             self.query_seq = Seq(seq_parts[0] + snp + seq_parts[-1])
-            self.context = offset
-            self.amb = snp
+            return (offset, snp)
         elif gbs:
             #   The final check is whether the SNPs are from GBS tags or not. If
             #   they are, we iterate until we find the ambiguity, and return the
@@ -118,10 +117,7 @@ class SNPAnnotation(object):
             self.context_seq = 'GBS'
             for i, b in enumerate(self.query_seq):
                 if b in IUPAC:
-                    self.context = i
-                    self.amb = b
-                    break
-        return
+                    return (i, b)
 
     def get_aligned_pos(self, alignment):
         """Get the position of the SNP in the alignment."""

@@ -17,6 +17,8 @@ if sys.version_info.major is not 3:
 #   Try to import the Biopython library
 try:
     import Bio
+    from Bio.Blast import NCBIXML
+    from Bio import SeqIO
 except ImportError:
     print('This script requires the BioPython library to be installed.')
     exit(1)
@@ -63,41 +65,48 @@ def main():
 
     #   Done checking arguments. Start annotating SNPs.
     for s in setup_env.build_targets(args.fasta_file, args.dir, args.no_blast):
-        #   Start a SNPAnnotation class
+        #   If there is no blast, then we read the FASTA instead
+        if args.no_blast:
+            q_seq = s.replace('.xml', '.fasta')
+            q_seq = SeqIO.read(os.path.join(args.dir, q_seq), 'fasta')
+        else:
+            q_seq = s
         sys.stderr.write(
-            'Annotating ' + s.id + '\n')
-        anno = SNPAnnotation(s)
+            'Annotating ' + q_seq.id + '\n')
+        anno = SNPAnnotation(q_seq, args)
         #   Calculate the contextual sequence length
-        anno.calculate_clen(
-            args.clen,
-            args.gbs,
-            args.illumina)
+        # anno.calculate_clen(
+        #     args.clen,
+        #     args.gbs,
+        #     args.illumina)
         sys.stderr.write(
             '    Contextual sequence length: ' + str(anno.context) + '\n')
-
-        #   Start a BlastSearch class
-        blast = BlastSearch(
-            args.program,
-            args.evalue,
-            args.max_hits,
-            args.database,
-            args.entrez_query)
-        sys.stderr.write(
-            '    Running BLAST with the following parameters: ... \n'
-            '        Program:  ' + args.program + '\n'
-            '        E-value:  ' + str(args.evalue) + '\n'
-            '        Max hits: ' + str(args.max_hits) + '\n')
-        #   Decide the command to run BLAST, web or local?
-        blast.build_commandline(s)
-        #   Run the search, return a handle to the results
-        blastresults = blast.run_blast(s)
-        #   Move on to next element if we could not get BLAST results
-        if not blastresults:
+        #   If BLAST has already been run, we skip this step
+        if args.no_blast:
+            blastresults = open(os.path.join(args.dir, s), 'r')
+        else:
+            #   Start a BlastSearch class
+            blast = BlastSearch(
+                args.program,
+                args.evalue,
+                args.max_hits,
+                args.database,
+                args.entrez_query)
             sys.stderr.write(
-                '    No BLAST hits! Try less stringent criteria.\n')
-            continue
-        sys.stderr.write('    Done!\n')
-
+                '    Running BLAST with the following parameters: ... \n'
+                '        Program:  ' + args.program + '\n'
+                '        E-value:  ' + str(args.evalue) + '\n'
+                '        Max hits: ' + str(args.max_hits) + '\n')
+            #   Decide the command to run BLAST, web or local?
+            blast.build_commandline(s)
+            #   Run the search, return a handle to the results
+            blastresults = blast.run_blast(s)
+            #   Move on to next element if we could not get BLAST results
+            if not blastresults:
+                sys.stderr.write(
+                    '    No BLAST hits! Try less stringent criteria.\n')
+                continue
+            sys.stderr.write('    Done!\n')
         #   Start a GenBankHandler class to extract the GenBank record info
         genbank = GenBankHandler(args.email, blastresults)
         sys.stderr.write(
@@ -127,7 +136,7 @@ def main():
         sys.stderr.write(
             '    Aligning GenBank record and query sequence ... ')
         if gb_annotations['regions']:
-            genbank.align_genbank(s, gb_annotations['regions'][3])
+            genbank.align_genbank(q_seq, gb_annotations['regions'][3])
         else:
             sys.stderr.write(
                 '    No BLAST hits! Try less stringent criteria.\n')
@@ -154,8 +163,9 @@ def main():
         anno.print_annotation(args.output, args.outfmt)
 
         #   Cleanup our temporary files
-        os.remove(blast.blastin.name)
-        os.remove(blast.blastout.name)
+        if not args.no_blast:
+            os.remove(blast.blastin.name)
+            os.remove(blast.blastout.name)
         os.remove(genbank.genbank_seq.name)
         os.remove(genbank.needle_out.name)
         #   Sleep for 1 second to avoid making requests too quickly
