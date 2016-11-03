@@ -54,16 +54,14 @@ class BlastSearch(object):
                 db=self.db,
                 evalue=self.evalue,
                 outfmt=5,
-                num_descriptions=self.maxhits,
-                num_alignments=self.maxhits),
+                max_target_seqs=self.maxhits),
             'tblastx': NcbitblastxCommandline(
                 query=self.blastin.name,
                 out=self.blastout.name,
                 db=self.db,
                 evalue=self.evalue,
                 outfmt=5,
-                num_descriptions=self.maxhits,
-                num_alignments=self.maxhits)
+                max_target_seqs=self.maxhits)
             }
         if not self.web:
             #   Write the contents of the query sequence into the temp FASTA
@@ -71,6 +69,7 @@ class BlastSearch(object):
             #   files and not sequences
             SeqIO.write(query, self.blastin, 'fasta')
             self.commandline = command_dict[self.prog]
+            self.blastin.close()
         return
 
     def run_blast(self, query):

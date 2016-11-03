@@ -74,11 +74,6 @@ def main():
         sys.stderr.write(
             'Annotating ' + q_seq.id + '\n')
         anno = SNPAnnotation(q_seq, args)
-        #   Calculate the contextual sequence length
-        # anno.calculate_clen(
-        #     args.clen,
-        #     args.gbs,
-        #     args.illumina)
         sys.stderr.write(
             '    Contextual sequence length: ' + str(anno.context) + '\n')
         #   If BLAST has already been run, we skip this step
@@ -98,15 +93,16 @@ def main():
                 '        E-value:  ' + str(args.evalue) + '\n'
                 '        Max hits: ' + str(args.max_hits) + '\n')
             #   Decide the command to run BLAST, web or local?
-            blast.build_commandline(s)
+            blast.build_commandline(q_seq)
             #   Run the search, return a handle to the results
-            blastresults = blast.run_blast(s)
-            #   Move on to next element if we could not get BLAST results
-            if not blastresults:
-                sys.stderr.write(
-                    '    No BLAST hits! Try less stringent criteria.\n')
-                continue
-            sys.stderr.write('    Done!\n')
+            blastresults = blast.run_blast(q_seq)
+        #   Move on to next element if we could not get BLAST results
+        if not blastresults:
+            anno.print_annotation(args.output, args.outfmt)
+            sys.stderr.write(
+                '    No BLAST hits! Try less stringent criteria.\n')
+            continue
+        sys.stderr.write('    Done!\n')
         #   Start a GenBankHandler class to extract the GenBank record info
         genbank = GenBankHandler(args.email, blastresults)
         sys.stderr.write(
@@ -124,10 +120,13 @@ def main():
         gb_annotations = genbank.extract_annotations(args.target_organism)
         #   Set the organism name, gene name, and related locus info from the
         #   annotations.
+        if gb_annotations['records']:
+            anno.genbank_id = gb_annotations['records']
         if gb_annotations['regions']:
             anno.organism = gb_annotations['regions'][1]
         if gb_annotations['genes']:
-            anno.gene_short_name = gb_annotations['genes']
+            #   Take just the first entry, since it will be the best hit
+            anno.gene_short_name = gb_annotations['genes'][0]
         if gb_annotations['related']:
             anno.alt_gene = gb_annotations['related'][0]
             anno.alt_org = gb_annotations['related'][1]
@@ -139,7 +138,8 @@ def main():
             genbank.align_genbank(q_seq, gb_annotations['regions'][3])
         else:
             sys.stderr.write(
-                '    No BLAST hits! Try less stringent criteria.\n')
+                '    No annotations found! Try less stringent criteria.\n')
+            anno.print_annotation(args.output, args.outfmt)
             continue
         sys.stderr.write('Done!\n')
 

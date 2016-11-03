@@ -390,4 +390,5 @@ class SNPAnnotation(object):
                     '3\'_FLANK: ' + str(threeflank),
                     '||']) + '\n'
         outhandle.write(towrite)
+        outhandle.flush()
         return

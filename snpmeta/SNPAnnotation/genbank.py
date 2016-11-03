@@ -178,6 +178,7 @@ class GenBankHandler(object):
         whether records come from target organisms or not."""
         #   Empty dict to hold the extracted annotation information
         annotations = {
+            'records': None,
             'regions': None,
             'genes': None,
             'related': None
@@ -186,8 +187,10 @@ class GenBankHandler(object):
         #   On this pass, we will only get hits from our target organisms, and
         #   out of those, we will only take the hits with an annotated CDS.
         for d, r in zip(self.hit_directions, self.genbank_records):
+            #   Save the IDs, since we will want to print them out later
+            annotations['records'] = r.id
             #   We want to extract any genes that may be on the record
-            annotations['genes'] = [f for f in r.features if f.type == 'gene']
+            annotations['genes'] = [f.qualifiers.get('gene', [None])[0] for f in r.features if f.type == 'gene']
             #   Extract the organism from the info
             organism = r.annotations['organism']
             #   If the user has supplied some target organisms...
