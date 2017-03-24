@@ -366,7 +366,9 @@ class SNPAnnotation(object):
             #   We will start with a list of three empty strings
             #   and build the comment field out of our information
             comment = ['', '', '']
-            if not self.cds_feat:
+            if self.genbank_id == '-':
+                comment[0] = '-'
+            elif not self.cds_feat:
                 comment[0] = 'non-coding'
             else:
                 comment[1] = self.aa_1

@@ -113,7 +113,7 @@ def main():
             sys.stderr.write('\n')
             anno.print_annotation(args.output, args.outfmt)
             continue
-        sys.stderr.write('    Done!\n')
+        sys.stderr.write('Done!\n')
         #   And extract the regions and annotations
         sys.stderr.write(
             '    Extracting annotation information from GenBank records\n')
@@ -138,7 +138,7 @@ def main():
             genbank.align_genbank(q_seq, gb_annotations['regions'][3])
         else:
             sys.stderr.write(
-                '    No annotations found! Try less stringent criteria.\n')
+                '\nNo annotations found! Try less stringent criteria.\n')
             anno.print_annotation(args.output, args.outfmt)
             continue
         sys.stderr.write('Done!\n')
